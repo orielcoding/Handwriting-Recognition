@@ -6,13 +6,8 @@ import numpy as np
 
 def padding(img, original_width, original_height, target_width, target_height):
     """
-
-    :param img:
-    :param original_width:
-    :param original_height:
-    :param target_width:
-    :param target_height:
-    :return:
+    This function padding an image to have the target size.
+    :return padded_img - the image after padding.
     """
     padding_height_start = int((target_height - original_height) / 2)
     padding_height_end = padding_height_start + original_height
@@ -28,11 +23,8 @@ def padding(img, original_width, original_height, target_width, target_height):
 
 def resize(img, new_height, new_width):
     """
-
-    :param img:
-    :param new_height:
-    :param new_width:
-    :return:
+    This function resizing the image according to the new size criteria.
+    :return resized image
     """
     original_width = img.shape[1]
     original_height = img.shape[0]
@@ -52,12 +44,7 @@ def resize(img, new_height, new_width):
 
 def prepare_img(img, img_w, img_h, bw):
     """
-
-    :param img:
-    :param img_w:
-    :param img_h:
-    :param bw:
-    :return:
+    This function return normalized and noise free image.
     """
     img = cv.imread(img)
     img = resize(img,img_h, img_w)
@@ -75,8 +62,7 @@ def prepare_img(img, img_w, img_h, bw):
 
 def parse():
     """
-
-    :return:
+    Defines the cmd controll option by the user of how to preprocess the entered images.
     """
     parser = argparse.ArgumentParser(prog='preprocessing',
                                      description='preprocess images (resize, color, noise filtering)')
