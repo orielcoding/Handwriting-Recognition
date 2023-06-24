@@ -20,7 +20,7 @@ def padding(img, original_width, original_height, target_width, target_height):
     padding_width_start = int((target_width - original_width) / 2)
     padding_width_end = padding_width_start + original_width
 
-    padded_img = np.full([target_height, target_width, 1], 255) # creates an "empty" image (white pixels)
+    padded_img = np.full([target_height, target_width, 1], 255)
     padded_img[padding_height_start:padding_height_end, padding_width_start:padding_width_end, :] = img
 
     return padded_img
@@ -120,6 +120,7 @@ def parse():
     parser = argparse.ArgumentParser(prog='preprocessing',
                                      description='preprocess images (resize, color, noise filtering)')
     parser.add_argument('-batch', action='store_true')
+    parser.add_argument('-batch_size', default=None, help='batch size (number of images)')
     parser.add_argument('-input_folder', type=str, help='path to folder of images')
     parser.add_argument('-dest_folder', type=str, help='destination folder for resized images')
     parser.add_argument('-input_file', type=str, help='path to input file')
