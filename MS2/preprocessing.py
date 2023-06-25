@@ -6,13 +6,13 @@ import numpy as np
 
 def padding(img, original_width, original_height, target_width, target_height):
     """
-
-    :param img:
-    :param original_width:
-    :param original_height:
-    :param target_width:
-    :param target_height:
-    :return:
+    pads an images with white background evenly on all sides
+    :param img: the image that needs padding
+    :param original_width: original width of the image
+    :param original_height: original height of the image
+    :param target_width: the target width of the new image
+    :param target_height: the target height of the new image
+    :return: a new padded image
     """
     padding_height_start = int((target_height - original_height) / 2)
     padding_height_end = padding_height_start + original_height
@@ -20,7 +20,7 @@ def padding(img, original_width, original_height, target_width, target_height):
     padding_width_start = int((target_width - original_width) / 2)
     padding_width_end = padding_width_start + original_width
 
-    padded_img = np.full([target_height, target_width, 1], 255)
+    padded_img = np.full([target_height, target_width, 1], 255) # creates an "empty" image (white pixels)
     padded_img[padding_height_start:padding_height_end, padding_width_start:padding_width_end, :] = img
 
     return padded_img
@@ -28,11 +28,13 @@ def padding(img, original_width, original_height, target_width, target_height):
 
 def resize(img, new_height, new_width):
     """
-
-    :param img:
-    :param new_height:
-    :param new_width:
-    :return:
+    calculates the new size of the based of the ratio between the new width/height and the original width/height this
+    is done separately to avoid enlarging any dimension and pad it instead.
+    The image is then resized and padded accordingly.
+    :param img: the image that needs resizing
+    :param new_height: the new height of the image
+    :param new_width: the new width of the image
+    :return: a resized padded image
     """
     original_width = img.shape[1]
     original_height = img.shape[0]
@@ -52,12 +54,12 @@ def resize(img, new_height, new_width):
 
 def prepare_img(img, img_w, img_h, bw):
     """
-
-    :param img:
-    :param img_w:
-    :param img_h:
-    :param bw:
-    :return:
+    resizing the original image to the desired dimensions
+    :param img: the original img
+    :param img_w: the desired width
+    :param img_h: the desired height
+    :param bw: binary image output? (black and white)
+    :return: a new resized processed image
     """
     img = cv.imread(img)
     img = resize(img,img_h, img_w)
@@ -73,15 +75,51 @@ def prepare_img(img, img_w, img_h, bw):
     return img
 
 
+def prepare_and_save_image(filename, new_width, new_height, bw, destination):
+    """
+    calls the preprocessing function and saves the output
+    """
+    img = prepare_img(filename, new_width, new_height, bw)
+    cv.imwrite(destination, img)
+
+
+def process_batch(args):
+    """
+    process a batch of images (folder)
+    """
+    input_folder = args.input_folder
+    dest_folder = args.dest_folder
+    os.makedirs(dest_folder, exist_ok=True)
+    for filename in os.listdir(input_folder):
+        if filename.lower().endswith(('.jpg', '.png')):
+            input_file = os.path.join(input_folder, filename)
+            output_file = os.path.join(dest_folder, filename)
+
+            prepare_and_save_image(input_file, args.new_width, args.new_height, args.BW, output_file)
+
+
+def process_single_image(args):
+    """
+    processes a single image
+    """
+    input_file = args.input_file
+
+    if not os.path.exists(input_file):
+        print(f"input file '{input_file}' does not exist")
+        return
+
+    output_file = input_file.rsplit('.', 1)[0] + '_new.png'
+    prepare_and_save_image(input_file, args.new_width, args.new_height, args.BW, output_file)
+
+
 def parse():
     """
-
-    :return:
+    args parser
+    :return: the parsed arguments
     """
     parser = argparse.ArgumentParser(prog='preprocessing',
                                      description='preprocess images (resize, color, noise filtering)')
     parser.add_argument('-batch', action='store_true')
-    parser.add_argument('-batch_size', default=None, help='batch size (number of images)')
     parser.add_argument('-input_folder', type=str, help='path to folder of images')
     parser.add_argument('-dest_folder', type=str, help='destination folder for resized images')
     parser.add_argument('-input_file', type=str, help='path to input file')
@@ -92,31 +130,15 @@ def parse():
     return parser.parse_args()
 
 
-if __name__ == "__main__":
+
+def main():
     args = parse()
+
     if args.batch:
-        try:
-            if not os.path.exists(args.dest_folder):
-                os.makedirs(args.dest_folder)
-        except OSError as err:
-            print("destination folder was not entered or the path does not exist")
-
-        if not args.batch_size:
-            args.batch_size = len(os.listdir(args.input_folder))
-        batch = 0
-
-        for filename in os.listdir(args.input_folder):
-            if filename.endswith('.jpg') or filename.endswith('.png'):
-                if batch == args.batch_size:
-                    break
-
-                img = prepare_img(os.path.join(args.input_folder, filename), args.new_width, args.new_height, args.BW)
-                cv.imwrite(os.path.join(args.dest_folder, filename), img)
-                batch += 1
+        process_batch(args)
     else:
-        try:
-            os.path.exists(args.input_file)
-        except OSError as err:
-            print("input file was not entered or it does not exist")
-        img = prepare_img(args.input_file, args.new_width, args.new_height, args.BW)
-        cv.imwrite(args.input_file.split('.')[0] + '_new.png', img)
+        process_single_image(args)
+
+
+if __name__ == "__main__":
+    main()
