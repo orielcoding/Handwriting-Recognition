@@ -20,10 +20,29 @@ def predict(image_path):
     processor = TrOCRProcessor.from_pretrained('microsoft/trocr-large-stage1')
     dataset = IAMDataset(root_dir=path, df=df_test, processor=processor)
 
-    model = VisionEncoderDecoderModel.from_pretrained("./model")
-    pred = model.predict(dataset)
+    model = VisionEncoderDecoderModel.from_pretrained("./my_model/content/my_model")
+
+    training_args = Seq2SeqTrainingArguments(
+        predict_with_generate=True,
+        evaluation_strategy="steps",
+        per_device_train_batch_size=8,
+        per_device_eval_batch_size=8,
+        output_dir="./",
+        logging_steps=2,
+        save_steps=1000,
+        eval_steps=100,
+    )
+
+    trainer = Seq2SeqTrainer(
+        model=model,
+        tokenizer=processor.feature_extractor,
+        args=training_args,
+        data_collator=default_data_collator,
+    )
+
+    pred = trainer.predict(dataset)
     pred_ids = pred.predictions
-    print(f"The predicted text: {pred.batch_decode(pred_ids, skip_special_tokens=True)[0]}")
+    print(f"The predicted text: {processor.batch_decode(pred_ids, skip_special_tokens=True)[0]}")
 
 gr.Interface(fn=predict_ocr, inputs=gr.Image(type='filepath'), outputs=gr.Textbox(), title="OCR Demo").launch()
-predict('./3.jpeg')
+print(predict('unnamed.jpg'))
