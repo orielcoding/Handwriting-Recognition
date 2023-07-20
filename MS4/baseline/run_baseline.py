@@ -12,15 +12,19 @@ with open("config.json") as f:
 
 def main():
 
-    train_images, test_images, train_labels, test_labels = data_preparation.load_data(config["path_to_preprocessed_data"])
+    # train_images, test_images, train_labels, test_labels = data_preparation.load_data(config["path_to_preprocessed_data"])
+    #
+    # vocabulary = data_preparation.get_vocabulary(train_labels)
+    # max_sequence_length = data_preparation.get_max_seq_length(train_labels)
+    # train_labels_preprocessed = data_preparation.label_preprocessing(train_labels, vocabulary)
 
-    vocabulary = data_preparation.get_vocabulary(train_labels)
-    max_sequence_length = data_preparation.get_max_seq_length(train_labels)
-    train_labels_preprocessed = data_preparation.label_preprocessing(train_labels, vocabulary)
+    # history = train_baseline(train_images, train_labels_preprocessed, max_sequence_length)
+    #
+    # evaluate_baseline(test_images, test_labels, vocabulary)
 
-    history = train_baseline(train_images, train_labels_preprocessed, max_sequence_length)
+    predicted_label = predict_baseline(config["path_to_prediction_image"])
 
-    evaluate_baseline(test_images, test_labels, vocabulary)
+    print(predicted_label)
 
 
 def train_baseline(train_images, train_labels_preprocessed, max_length):
