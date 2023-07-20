@@ -45,4 +45,4 @@ def predict(image_path):
     print(f"The predicted text: {processor.batch_decode(pred_ids, skip_special_tokens=True)[0]}")
 
 # gr.Interface(fn=git log --all --decorate --oneline --graphpredict_ocr, inputs=gr.Image(type='filepath'), outputs=gr.Textbox(), title="OCR Demo").launch()
-print(predict('unnamed.jpg'))
+print(predict('3.jpeg'))
