@@ -4,7 +4,6 @@ import os
 
 from tensorflow import keras
 
-
 # loading configuration file
 with open("config.json") as f:
     config = json.load(f)
@@ -12,11 +11,11 @@ with open("config.json") as f:
 
 def train(train_images, train_labels_preprocessed, max_sequence_length):
     """
-
-    :param train_images:
-    :param train_labels_preprocessed:
-    :param max_sequence_length:
-    :return:
+    creates and trains the model
+    :param train_images: images preprocessed for training
+    :param train_labels_preprocessed: labels preprocessed for training
+    :param max_sequence_length: the length of the longest sentence of the train set
+    :return: history of the training
     """
 
     input_dim_1 = train_images.shape[1]
@@ -28,10 +27,11 @@ def train(train_images, train_labels_preprocessed, max_sequence_length):
 
     # Train the model
     history = baseline_model.fit(train_images, train_labels_preprocessed,
-                       validation_split=config["VAL_SPLIT"],
-                       epochs=config["EPOCHS"],
-                       batch_size=config["BATCH_SIZE"],
-                       callbacks=[callback])
+                                 validation_split=config["VAL_SPLIT"],
+                                 epochs=config["EPOCHS"],
+                                 batch_size=config["BATCH_SIZE"],
+                                 callbacks=[callback])
+
 
     # checking if the directory demo_folder exist or not.
     if not os.path.exists(config["path_to_model"]):

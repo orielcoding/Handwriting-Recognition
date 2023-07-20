@@ -8,11 +8,11 @@ with open("config.json") as f:
 
 def create_baseline(input_dim_1, input_dim_2, max_sequence_length):
     """
-
-    :param input_dim_1:
-    :param input_dim_2:
-    :param max_sequence_length:
-    :return:
+    builds the baseline model for the HWR task
+    :param input_dim_1: input dimension of the model (image width)
+    :param input_dim_2: input dimension of the model (image height)
+    :param max_sequence_length: the length of the longest sentence of the train set
+    :return: The compiled model
     """
 
     # Hyperparameters:

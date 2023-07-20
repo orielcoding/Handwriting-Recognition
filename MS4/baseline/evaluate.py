@@ -9,7 +9,8 @@ import numpy as np
 with open("config.json") as f:
     config = json.load(f)
 
-baseline_model = keras.models.load_model('saved_model/baseline_model')
+baseline_model = keras.models.load_model(config["path_to_model"] + "baseline_model")
+
 
 def word_error_rate(y_true, y_pred):
     """
@@ -30,11 +31,11 @@ def character_error_rate(y_true, y_pred):
 
 def baseline_evaluate(test_images, test_labels, vocabulary):
     """
-
-    :param test_images:
-    :param test_labels:
-    :param vocabulary:
-    :return:
+    evaluate performance of baseline model on test set
+    :param test_images: preprocessed test images
+    :param test_labels: preprocesses test labels
+    :param vocabulary: dictionnary mapping all the characters of the train set
+    :return: the character and word error rates evaluated o nthe test set
     """
 
     preds = baseline_model.predict(test_images)
