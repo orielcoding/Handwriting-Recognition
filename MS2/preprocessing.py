@@ -20,9 +20,11 @@ def padding(img, original_width, original_height, target_width, target_height):
     padding_width_start = int((target_width - original_width) / 2)
     padding_width_end = padding_width_start + original_width
 
+
     num_channels = img.shape[2]  # Number of color channels in the image
 
     padded_img = np.full([target_height, target_width, num_channels], 255)  # Create an "empty" image (white pixels)
+    
     padded_img[padding_height_start:padding_height_end, padding_width_start:padding_width_end, :] = img
 
     return padded_img
@@ -130,7 +132,6 @@ def parse():
     parser.add_argument('-new_width', type=int, default=512, help='the new width after resize (recommended 512)')
 
     return parser.parse_args()
-
 
 
 def main():
