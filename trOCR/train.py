@@ -1,4 +1,3 @@
-from torch.utils.data import DataLoader
 from transformers import Seq2SeqTrainer, Seq2SeqTrainingArguments
 from transformers import default_data_collator
 from data_preparation import load_and_preprocess_data
@@ -7,6 +6,9 @@ from datasets import load_metric
 
 
 def compute_metrics(processor, pred):
+    """
+    calculating the CER given the processor (that holds the correct label) and prediction.
+    """
     labels_ids = pred.label_ids
     pred_ids = pred.predictions
     pred_str = processor.batch_decode(pred_ids, skip_special_tokens=True)
@@ -18,6 +20,10 @@ def compute_metrics(processor, pred):
 
 
 def main():
+    """
+    the main function that creates the generator objects for the dataset and the model, and then creates a seq2seq
+    object to train the data and create the model.
+    """
     train_dataset, eval_dataset, processor = load_and_preprocess_data()
     model = get_model(processor)
 

@@ -1,4 +1,3 @@
-import torch
 from dataset import IAMDataset
 from transformers import VisionEncoderDecoderModel
 import pandas as pd
@@ -6,11 +5,12 @@ import os
 from transformers import Seq2SeqTrainer, Seq2SeqTrainingArguments
 from transformers import default_data_collator
 from transformers import TrOCRProcessor
-import gradio as gr
 
 
 def predict(image_path):
-
+    """
+    An inference function loading the model and predicting the characters in an image.
+    """
     path = os.path.dirname(image_path)
     file_name = os.path.basename(image_path)
     df_test = pd.DataFrame()
@@ -20,7 +20,7 @@ def predict(image_path):
     processor = TrOCRProcessor.from_pretrained('microsoft/trocr-large-stage1')
     dataset = IAMDataset(root_dir=path, df=df_test, processor=processor)
 
-    model = VisionEncoderDecoderModel.from_pretrained("./my_model/content/my_model")
+    model = VisionEncoderDecoderModel.from_pretrained("./my_model/content/my_model")  # pre-trained fine-tuned model
 
     training_args = Seq2SeqTrainingArguments(
         predict_with_generate=True,
@@ -44,5 +44,3 @@ def predict(image_path):
     pred_ids = pred.predictions
     print(f"The predicted text: {processor.batch_decode(pred_ids, skip_special_tokens=True)[0]}")
 
-# gr.Interface(fn=git log --all --decorate --oneline --graphpredict_ocr, inputs=gr.Image(type='filepath'), outputs=gr.Textbox(), title="OCR Demo").launch()
-print(predict('3.jpeg'))
